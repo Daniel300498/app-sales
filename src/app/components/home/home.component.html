@@ -1,3 +1,98 @@
-<section class="d-flex align-items-center justify-content-center flex-column text-center">
-  <h1 class="fw-bold mb-3">Bienvenid@ </h1>
-</section>
+<div class = "container-fluid mt-4">
+  <div class="mb-4">
+    <h2 class="fw-bold">Inicio</h2>
+    <p class="text-muted"> Resumen general del sistema de ventas</p>
+  </div>
+  <div *ngIf="loading" class="alert alert-info">Cargando...</div>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+  <div *ngIf="!loading">
+    <div class="row g-3 mb-4">
+      <div class="col-md-6 col-xl-3">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="text-muted mb-1">Productos</p>
+                <h3 class="fw-bold mb-0">{{ totalProducts }}</h3>
+              </div>
+              <i class="bi bi-box-seam fs-1 text-primary"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="text-muted mb-1">Ventas realizadas</p>
+                <h3 class="fw-bold mb-0">{{ totalSales }}</h3>
+              </div>
+              <i class="bi bi-receipt fs-1 text-success"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="text-muted mb-1">Total vendido</p>
+                <h3 class="fw-bold mb-0">Bs {{ totalRevenue | number:'1.2-2' }}</h3>
+              </div>
+              <i class="bi bi-currency-dollar fs-1 text-warning"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xl-3">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="text-muted mb-1">Cantidad de productos con Stock bajo</p>
+                <h3 class="fw-bold mb-0">{{ lowStockProducts }}</h3>
+              </div>
+              <i class="bi bi-exclamation-triangle fs-1 text-danger"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card shadow-sm">
+      <div class="card-header bg-white py-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <h5 class="fw-bold mb-0">Últimas ventas</h5>
+          <a routerLink="/sales" class="btn btn-outline-primary btn-sm">Ver todas</a>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Productos</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let sale of sales.slice(0, 5)">
+                <td>#{{ sale.id }}</td>
+                <td>{{ sale.created_at | date:'dd/MM/yyyy' }}</td>
+                <td>{{ sale.details.length }}producto(s)</td>
+                <td class="fw-bold">Bs {{ sale.total | number:'1.2-2' }}</td>
+              </tr>
+              <tr *ngIf="sales.length === 0">
+                <td colspan="4" class="text-center text-muted py-4">Todavía no hay ventas registradas.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

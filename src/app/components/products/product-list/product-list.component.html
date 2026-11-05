@@ -1,0 +1,50 @@
+<div class="container mt-4">
+    <h2 class="mb-4">Lista de Productos</h2>
+    <div *ngIf="loading" class="alert alert-info">Cargando productos...</div>
+    <div *ngIf="errorMessage" class="alert alert-danger">{{errorMessage}}</div>
+    <div class="table-responsive" *ngIf="!loading && !errorMessage">
+    <div class="row mb-3 g-2">
+
+        <div class="col-md-5">
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" placeholder="Buscar productos..." [(ngModel)]="searchTerm">
+                <button *ngIf="searchTerm" class="btn btn-outline-secondary" type="button" (click)="searchTerm = ''">Limpiar</button>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <select class="form-select" [(ngModel)]="sortBy">
+                <option value="id">Ordenar por ID</option>
+                <option value="name">Nombre (A-Z)</option>
+                <option value="price">Precio (menor a mayor)</option>
+                <option value="stock">Stock (menor a mayor)</option>
+            </select>
+        </div>
+    </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th>Imagen</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let product of filteredProducts">
+                    <td>{{product.id}}</td>
+                    <td>{{product.name}}</td>
+                    <td>{{product.price | currency}}</td>
+                    <td>
+                        <span class="fw-semibold">{{ product.stock }}</span>
+                        <span *ngIf="product.stock === 0" class="badge bg-danger ms-2">Agotado</span>
+                        <span *ngIf="product.stock > 0 && product.stock <= 5" class="badge bg-warning text-dark ms-2">Stock bajo</span>
+                        <span *ngIf="product.stock > 5" class="badge bg-success ms-2">Disponible</span>
+                    </td>
+                    <td><img [src]="product.image" [alt]="product.name" width="70"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
