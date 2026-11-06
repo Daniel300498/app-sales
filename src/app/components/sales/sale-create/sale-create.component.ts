@@ -9,7 +9,9 @@ import { SaleService } from 'src/app/services/sale.service';
   templateUrl: './sale-create.component.html',
   styleUrls: ['./sale-create.component.scss']
 })
+
 export class SaleCreateComponent implements OnInit {
+  discountPercent = 0;
   products: Product[] = [];
   selectedProductId: number | null = null;
   quantity = 1;
@@ -42,7 +44,11 @@ export class SaleCreateComponent implements OnInit {
   addProduct(): void {
     this.errorMessage = '';
     if (this.selectedProductId === null || this.quantity <= 0) {
-      this.errorMessage = 'Por favor, seleccione un producto y ingrese una cantidad válida.';
+      this.errorMessage = 'Por favor, seleccione un producto e ingrese una cantidad válida.';
+      return;
+    }
+    if(this.discountPercent < 0 || this.discountPercent > 10){
+      this.errorMessage = 'El porcentaje de descuento debe estar entre 0 y 10.';
       return;
     }
    const product = this.products.find(p => p.id === this.selectedProductId);
@@ -63,9 +69,11 @@ export class SaleCreateComponent implements OnInit {
     } else {
       this.items.push({
         product_id: product.id,
-        quantity: this.quantity
+        quantity: this.quantity,
+        discount_percent: this.discountPercent
       });
     }
+    this.discountPercent = 0;
     this.selectedProductId = null;
     this.quantity = 1;
   }
@@ -77,8 +85,20 @@ export class SaleCreateComponent implements OnInit {
     const product = this.getProduct(item.product_id);
     return product ? product.price * item.quantity : 0;
   }
+  getDiscountAmount(item: CreateSaleItem): number {
+  const subtotalCents = Math.round(this.getSubtotal(item) * 100);
+  const discountBasisPoints = Math.round(item.discount_percent * 100);
+  return Math.round((subtotalCents * discountBasisPoints) / 10000) / 100;
+}
+  getSubtotalWithDiscount(item: CreateSaleItem): number{
+    return this.getSubtotal(item) - this.getDiscountAmount(item);
+  }
+
+  getTotalDiscount(): number{
+    return this.items.reduce((total, item)=> total + this.getDiscountAmount(item), 0);
+  }
   getTotal(): number{
-    return this.items.reduce((total, item) => total + this.getSubtotal(item), 0);
+    return this.items.reduce((total, item) => total + this.getSubtotalWithDiscount(item), 0);
   }
   removeProduct(productId: number): void{
     this.items = this.items.filter(item => item.product_id !== productId);

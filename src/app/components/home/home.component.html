@@ -73,7 +73,6 @@
           <table class="table table-hover align-middle">
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Fecha</th>
                 <th>Productos</th>
                 <th>Total</th>
@@ -81,7 +80,6 @@
             </thead>
             <tbody>
               <tr *ngFor="let sale of sales.slice(0, 5)">
-                <td>#{{ sale.id }}</td>
                 <td>{{ sale.created_at | date:'dd/MM/yyyy' }}</td>
                 <td>{{ sale.details.length }}producto(s)</td>
                 <td class="fw-bold">Bs {{ sale.total | number:'1.2-2' }}</td>

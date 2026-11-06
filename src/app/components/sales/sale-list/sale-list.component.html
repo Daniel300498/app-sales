@@ -2,11 +2,8 @@
 
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Historial de ventas</h2>
-
-    <button class="btn btn-primary" routerLink="/sales/create">
-      <i class="bi bi-plus-circle"></i>Nueva venta</button>
+    <button class="btn btn-primary" routerLink="/sales/create"><i class="bi bi-plus-circle"></i> Nueva venta</button>
   </div>
-
   <div *ngIf="loading" class="alert alert-info">Cargando ventas...</div>
   <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
   <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
@@ -16,30 +13,36 @@
         <tr>
           <th>ID</th>
           <th>Fecha</th>
-          <th>Productos</th>
-          <th>Total</th>
+          <th>Productos y descuentos</th>
+          <th>Resumen de venta</th>
           <th>Acciones</th>
         </tr>
       </thead>
-
       <tbody>
         <tr *ngFor="let sale of sales">
           <td>{{ sale.id }}</td>
           <td>{{ sale.created_at | date:'dd/MM/yyyy' }}</td>
           <td>
-            <ul class="mb-0 ps-3">
-              <li *ngFor="let detail of sale.details">{{ detail.product }} ({{ detail.quantity }}) - Bs {{ detail.subtotal | number:'1.2-2' }}</li>
-            </ul>
+            <div *ngFor="let detail of sale.details" class="mb-3 pb-2 border-bottom">
+              <div class="fw-bold">{{ detail.product }} ({{ detail.quantity }})
+              </div>
+              <div class="small text-muted">Subtotal: Bs {{ detail.subtotal | number:'1.2-2' }}</div>
+              <div class="small text-success" *ngIf="detail.discount_amount > 0">
+                <i class="bi bi-tag"></i>Descuento ({{ detail.discount_percent }}%): - Bs {{ detail.discount_amount | number:'1.2-2' }}
+              </div>
+              <div class="small fw-semibold">Total del producto: Bs {{ detail.subtotal_with_discount | number:'1.2-2' }}</div>
+            </div>
           </td>
-
           <td>
-            <strong>Bs {{ sale.total }}</strong>
+            <div class="small text-muted">Subtotal: Bs {{ (sale.total + sale.total_discount) | number:'1.2-2' }}
+            </div>
+            <div class="small text-success" *ngIf="sale.total_discount > 0">Descuento: - Bs{{ sale.total_discount | number:'1.2-2' }}
+            </div>
+            <div class="fw-bold mt-1">Total: Bs {{ sale.total | number:'1.2-2' }}</div>
           </td>
-
           <td>
             <button class="btn btn-danger btn-sm" (click)="deleteSale(sale.id)" [disabled]="deletingSaleId === sale.id">
-              <span *ngIf="deletingSaleId !== sale.id">
-                <i class="bi bi-trash"></i>Eliminar</span>
+              <span *ngIf="deletingSaleId !== sale.id"><i class="bi bi-trash"></i> Eliminar</span>
               <span *ngIf="deletingSaleId === sale.id">Eliminando...</span>
             </button>
           </td>
@@ -48,5 +51,4 @@
     </table>
   </div>
   <div *ngIf="!loading && !errorMessage && sales.length === 0" class="alert alert-secondary text-center">No hay ventas registradas.</div>
-
 </div>
